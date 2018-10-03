@@ -10,7 +10,6 @@ import UIKit
 
 class ViewController: UIViewController {
 
-
     var testButton: UIButton!
 
     var stackViewController: StackViewController!
@@ -32,7 +31,7 @@ class ViewController: UIViewController {
         setupConstraints()
 
         stackViewController = StackViewController()
-        let stackView = stackViewController.view
+        _ = stackViewController.view
 
 
     }
@@ -70,6 +69,13 @@ class ViewController: UIViewController {
         applyButtonStyle(with: customButton)
         stackViewController.button = customButton
 
+        let shuffleButton = UIButton(type: .custom)
+        shuffleButton.translatesAutoresizingMaskIntoConstraints = false
+        shuffleButton.setTitle("Shuffle play", for: .normal)
+        shuffleButton.addTarget(self, action: #selector(shuffleButtonTapped), for: .touchUpInside)
+        applyButtonStyle(with: shuffleButton)
+        stackViewController.shuffleButton = shuffleButton
+
         self.navigationController?.pushViewController(stackViewController, animated: true)
 
     }
@@ -93,5 +99,8 @@ class ViewController: UIViewController {
         print("me tapped")
     }
 
-}
+    @objc func shuffleButtonTapped() {
+        print("shuffle me")
+    }
 
+}

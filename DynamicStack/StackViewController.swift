@@ -10,34 +10,56 @@ import UIKit
 
 class StackViewController: UIViewController {
 
-    let staticHeight: CGFloat = 300.0
+    let staticHeight: CGFloat = 340
 
-    let topDistance: CGFloat = 100.0
+    let topDistance: CGFloat = 60.0
 
     var containerView: UIView!
     var scrollView: UIScrollView!
 
+    var bottomView:UIView!
     var stackView: UIStackView!
     var stackBackgroundView: UIView!
+    var imageView:UIImageView!
     var titleLabel: UILabel!
     var txtView: UITextView!
+    var shuffleButton: UIButton! {
+        didSet {
+            shuffleButton.removeFromSuperview()
+            scrollView.addSubview(shuffleButton)
+            print("shuffle height", shuffleButton.frame.height)
+            shuffleButton.setContentHuggingPriority(.required, for: .vertical)
+            shuffleButton.setContentCompressionResistancePriority(.required, for: .vertical)
+            let defaultPositionConstraint = shuffleButton.centerYAnchor.constraint(equalTo: bottomView.topAnchor)
+            defaultPositionConstraint.priority = .defaultHigh
+            let extendedConstraints:[NSLayoutConstraint] = [
+                shuffleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                shuffleButton.topAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
+                defaultPositionConstraint,
+            ]
+
+            NSLayoutConstraint.activate(extendedConstraints)
+        }
+    }
 
     var startPoint: CGPoint = CGPoint(x: 0, y: 0)
 
     var headerHeightConstraint: NSLayoutConstraint!
 
+    var topConstraint: NSLayoutConstraint!
+    var bottomConstraint: NSLayoutConstraint!
+
+    var maskView:UIView!
+
+    var offSet:CGPoint = .zero
+
     var button: UIButton! {
         didSet {
             button.removeFromSuperview()
-            self.stackView .addArrangedSubview(button)
+            self.stackView.addArrangedSubview(button)
             print("height", button.frame.height)
-            let extendedConstraints = [
-
-                button.heightAnchor.constraint(equalToConstant: button.frame.height)
-                ]
-            constraints.append(contentsOf: extendedConstraints)
-            NSLayoutConstraint.activate(constraints)
-
+            button.setContentHuggingPriority(.required, for: .vertical)
+            button.setContentCompressionResistancePriority(.required, for: .vertical)
         }
     }
 
@@ -55,13 +77,22 @@ class StackViewController: UIViewController {
 
 
     override func viewDidLoad() {
+        //view.layer.mask  = CALayer()
+        scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = UIColor.cyan.withAlphaComponent(0.5)
+        scrollView.delegate = self
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.contentInsetAdjustmentBehavior = .never
+
+        self.view.addSubview(scrollView)
         containerView = UIView()
         containerView.accessibilityIdentifier = "container view"
         containerView.translatesAutoresizingMaskIntoConstraints = false
         containerView.backgroundColor = UIColor.blue.withAlphaComponent(0.5)
 
         containerView.clipsToBounds = true
-        view.addSubview(containerView)
+        scrollView.addSubview(containerView)
 
         stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,15 +102,14 @@ class StackViewController: UIViewController {
         stackView.setContentHuggingPriority(.required, for: .vertical)
         containerView .addSubview(stackView)
 
-
-
-
         stackBackgroundView = UIView()
         stackBackgroundView.backgroundColor = UIColor.red.withAlphaComponent(0.5)
         stackBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         stackView.insertSubview(stackBackgroundView, at: 0)
 
-
+        let image = UIColor.orange.image(CGSize(width: 128, height: 128))
+        imageView = UIImageView(image: image)
+        stackView.addArrangedSubview(imageView)
         //Label has a max width, and a certain font, if it exceeds the length adjust font
         titleLabel = UILabel(frame: .zero)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -94,20 +124,24 @@ class StackViewController: UIViewController {
         applyDefaultTxtViewStyle()
         stackView.addArrangedSubview(txtView)
 
-        scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = UIColor.cyan.withAlphaComponent(0.5)
-        scrollView.delegate = self
-        scrollView.contentSize = CGSize(width: view.bounds.width, height: 1000)
-        scrollView.showsVerticalScrollIndicator = true
-        scrollView.contentInsetAdjustmentBehavior = .never
-
-        self.view.addSubview(scrollView)
+        bottomView = UIView()
+        bottomView.accessibilityIdentifier = "bottom view"
+        bottomView.translatesAutoresizingMaskIntoConstraints = false
+        bottomView.backgroundColor = UIColor.yellow.withAlphaComponent(0.5)
+        scrollView.addSubview(bottomView)
 
         setUpConstraints()
 
 
     }
+
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        view.layer.mask?.backgroundColor = UIColor.white.cgColor
+//        view.layer.mask?.frame = view.bounds.divided(atDistance: 100, from: .minYEdge).remainder
+//    }
+
+
 
 
     private func applyDefaultLabelStyle() {
@@ -129,15 +163,26 @@ class StackViewController: UIViewController {
 
 
     private func setUpConstraints () {
-        headerHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: staticHeight)
-        headerHeightConstraint.priority = .defaultHigh
-        constraints.append(headerHeightConstraint)
+//        headerHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: staticHeight)
+//        headerHeightConstraint.priority = .required
+//        constraints.append(headerHeightConstraint)
 
-        let originalConstraints = [
-            containerView.widthAnchor.constraint(equalTo: view.widthAnchor),
-            containerView.topAnchor.constraint(equalTo: view.topAnchor),
-            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            containerView.heightAnchor.constraint(greaterThanOrEqualToConstant: topDistance),
+        topConstraint = containerView.topAnchor.constraint(equalTo: scrollView.topAnchor)
+        topConstraint.priority = .defaultHigh
+        constraints.append(topConstraint)
+
+        bottomConstraint = bottomView.topAnchor.constraint(equalTo: containerView.bottomAnchor)
+        bottomConstraint.priority = .defaultHigh
+        constraints.append(bottomConstraint)
+
+
+
+        let originalConstraints:[NSLayoutConstraint] = [
+            containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+
+            containerView.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor),
+            containerView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            containerView.heightAnchor.constraint(equalToConstant: staticHeight),
 
             stackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: topDistance),
             stackView.widthAnchor.constraint(equalTo: containerView.widthAnchor),
@@ -151,36 +196,42 @@ class StackViewController: UIViewController {
             titleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor, constant: -60),
             txtView.widthAnchor.constraint(lessThanOrEqualTo: stackView.widthAnchor, constant: -60),
 
-            scrollView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
-            scrollView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            scrollView.topAnchor.constraint(equalTo: containerView.bottomAnchor),
+            scrollView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            scrollView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+
+            bottomView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            bottomView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            bottomView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            bottomView.topAnchor.constraint(lessThanOrEqualTo:containerView.bottomAnchor),
+            bottomView.heightAnchor.constraint(equalToConstant:800),
+            bottomView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
         ]
+        
         constraints.append(contentsOf:originalConstraints)
         NSLayoutConstraint.activate(constraints)
     }
 
-
-
     private func updateStackViewController(distance: CGFloat) {
-        let adjusted = staticHeight - distance
-        
-        headerHeightConstraint.constant = max(adjusted, topDistance)
-
-       // self.view.layoutIfNeeded()
+       bottomConstraint.constant = -distance
     }
-
-
-
-
 }
 
 
 extension StackViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offset = scrollView.contentOffset
+        offSet = scrollView.contentOffset
+        updateStackViewController(distance:offSet.y)
+    }
+}
 
-        print("scroll view offset", offset)
-        updateStackViewController(distance:offset.y)
+
+extension UIColor {
+    func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { rendererContext in
+            self.setFill()
+            rendererContext.fill(CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        }
     }
 }
