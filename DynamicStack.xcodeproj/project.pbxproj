@@ -13,6 +13,7 @@
 		1673C607214BD2B0000C461F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1673C606214BD2B0000C461F /* Assets.xcassets */; };
 		1673C60A214BD2B0000C461F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1673C608214BD2B0000C461F /* LaunchScreen.storyboard */; };
 		1673C612214C1C15000C461F /* StackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1673C611214C1C15000C461F /* StackViewController.swift */; };
+		16DD918B21662D51001037DC /* UIColor+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DD918A21662D51001037DC /* UIColor+Image.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		1673C609214BD2B0000C461F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1673C60B214BD2B0000C461F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1673C611214C1C15000C461F /* StackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewController.swift; sourceTree = "<group>"; };
+		16DD918A21662D51001037DC /* UIColor+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Image.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				1673C5FF214BD2AE000C461F /* AppDelegate.swift */,
 				1673C601214BD2AE000C461F /* ViewController.swift */,
 				1673C611214C1C15000C461F /* StackViewController.swift */,
+				16DD918A21662D51001037DC /* UIColor+Image.swift */,
 				1673C603214BD2AE000C461F /* Main.storyboard */,
 				1673C606214BD2B0000C461F /* Assets.xcassets */,
 				1673C608214BD2B0000C461F /* LaunchScreen.storyboard */,
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1673C612214C1C15000C461F /* StackViewController.swift in Sources */,
+				16DD918B21662D51001037DC /* UIColor+Image.swift in Sources */,
 				1673C602214BD2AE000C461F /* ViewController.swift in Sources */,
 				1673C600214BD2AE000C461F /* AppDelegate.swift in Sources */,
 			);
